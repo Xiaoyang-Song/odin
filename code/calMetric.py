@@ -335,6 +335,8 @@ def metric(nn, data):
         dataName = "Gaussian noise"
     if data == "Uniform":
         dataName = "Uniform Noise"
+    if data == "SVHN":
+        dataName = "SVHN"
     fprBase, fprNew = tpr95(indis)
     errorBase, errorNew = detection(indis)
     aurocBase, aurocNew = auroc(indis)
