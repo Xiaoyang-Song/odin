@@ -35,6 +35,8 @@ def testData(net1, criterion, CUDA_DEVICE, testloader10, testloader, nnName, dat
     N = 10000
     if dataName == "iSUN":
         N = 8925
+    elif dataName == "SVHN":
+        N = 26032
     print("Processing in-distribution images")
 ########################################In-distribution###########################################
     for j, data in enumerate(testloader10):

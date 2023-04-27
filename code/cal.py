@@ -63,7 +63,7 @@ def test(nnName, dataName, CUDA_DEVICE, epsilon, temperature):
     # MODIFIED
     if dataName == "SVHN":
         testsetout = torchvision.datasets.SVHN(
-            "../data/{}".format(dataName), split='train', download=True, transform=transform)
+            "../data/{}".format(dataName), split='test', download=True, transform=transform)
         testloaderOut = torch.utils.data.DataLoader(testsetout, batch_size=1,
                                                     shuffle=False, num_workers=2)
 
