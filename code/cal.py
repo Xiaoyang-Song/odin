@@ -29,14 +29,13 @@ import calData as d
 #CUDA_DEVICE = 0
 
 start = time.time()
-#loading data sets
+# loading data sets
 
 transform = transforms.Compose([
     transforms.ToTensor(),
-    transforms.Normalize((125.3/255, 123.0/255, 113.9/255), (63.0/255, 62.1/255.0, 66.7/255.0)),
+    transforms.Normalize((125.3/255, 123.0/255, 113.9/255),
+                         (63.0/255, 62.1/255.0, 66.7/255.0)),
 ])
-
-
 
 
 # loading neural network
@@ -51,46 +50,49 @@ transform = transforms.Compose([
 #imName = "Imagenet"
 
 
-
 criterion = nn.CrossEntropyLoss()
 
 
-
 def test(nnName, dataName, CUDA_DEVICE, epsilon, temperature):
-    
-    net1 = torch.load("../models/{}.pth".format(nnName))
-    optimizer1 = optim.SGD(net1.parameters(), lr = 0, momentum = 0)
-    net1.cuda(CUDA_DEVICE)
-    
-    if dataName != "Uniform" and dataName != "Gaussian":
-        testsetout = torchvision.datasets.ImageFolder("../data/{}".format(dataName), transform=transform)
-        testloaderOut = torch.utils.data.DataLoader(testsetout, batch_size=1,
-                                         shuffle=False, num_workers=2)
 
-    if nnName == "densenet10" or nnName == "wideresnet10": 
-	testset = torchvision.datasets.CIFAR10(root='../data', train=False, download=True, transform=transform)
-	testloaderIn = torch.utils.data.DataLoader(testset, batch_size=1,
-                                         shuffle=False, num_workers=2)
-    if nnName == "densenet100" or nnName == "wideresnet100": 
-	testset = torchvision.datasets.CIFAR100(root='../data', train=False, download=True, transform=transform)
-	testloaderIn = torch.utils.data.DataLoader(testset, batch_size=1,
-                                         shuffle=False, num_workers=2)
-    
+    net1 = torch.load("../models/{}.pth".format(nnName))
+    optimizer1 = optim.SGD(net1.parameters(), lr=0, momentum=0)
+    net1.cuda(CUDA_DEVICE)
+
+    # MODIFIED
+    if dataName == "SVHN":
+        testsetout = torchvision.datasets.SVHN(
+            "../data/{}".format(dataName), train=False, download=True, transform=transform)
+        testloaderOut = torch.utils.data.DataLoader(testsetout, batch_size=1,
+                                                    shuffle=False, num_workers=2)
+
+    if dataName != "Uniform" and dataName != "Gaussian" and dataName != "SVHN":
+        testsetout = torchvision.datasets.ImageFolder(
+            "../data/{}".format(dataName), transform=transform)
+        testloaderOut = torch.utils.data.DataLoader(testsetout, batch_size=1,
+                                                    shuffle=False, num_workers=2)
+
+    if nnName == "densenet10" or nnName == "wideresnet10":
+        testset = torchvision.datasets.CIFAR10(
+            root='../data', train=False, download=True, transform=transform)
+        testloaderIn = torch.utils.data.DataLoader(testset, batch_size=1,
+                                                   shuffle=False, num_workers=2)
+    if nnName == "densenet100" or nnName == "wideresnet100":
+        testset = torchvision.datasets.CIFAR100(
+            root='../data', train=False, download=True, transform=transform)
+        testloaderIn = torch.utils.data.DataLoader(testset, batch_size=1,
+                                                   shuffle=False, num_workers=2)
+
     if dataName == "Gaussian":
-        d.testGaussian(net1, criterion, CUDA_DEVICE, testloaderIn, testloaderIn, nnName, dataName, epsilon, temperature)
+        d.testGaussian(net1, criterion, CUDA_DEVICE, testloaderIn,
+                       testloaderIn, nnName, dataName, epsilon, temperature)
         m.metric(nnName, dataName)
 
     elif dataName == "Uniform":
-        d.testUni(net1, criterion, CUDA_DEVICE, testloaderIn, testloaderIn, nnName, dataName, epsilon, temperature)
+        d.testUni(net1, criterion, CUDA_DEVICE, testloaderIn,
+                  testloaderIn, nnName, dataName, epsilon, temperature)
         m.metric(nnName, dataName)
     else:
-	d.testData(net1, criterion, CUDA_DEVICE, testloaderIn, testloaderOut, nnName, dataName, epsilon, temperature) 
-	m.metric(nnName, dataName)
-
-
-
-
-
-
-
-
+        d.testData(net1, criterion, CUDA_DEVICE, testloaderIn,
+                   testloaderOut, nnName, dataName, epsilon, temperature)
+        m.metric(nnName, dataName)
