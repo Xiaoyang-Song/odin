@@ -54,7 +54,8 @@ criterion = nn.CrossEntropyLoss()
 
 
 def test(nnName, dataName, CUDA_DEVICE, epsilon, temperature):
-
+    # net1 = torch.load("../models/{}.pth".format(nnName),
+    #                   map_location=torch.device('cpu'))
     net1 = torch.load("../models/{}.pth".format(nnName))
     optimizer1 = optim.SGD(net1.parameters(), lr=0, momentum=0)
     net1.cuda(CUDA_DEVICE)
@@ -62,7 +63,7 @@ def test(nnName, dataName, CUDA_DEVICE, epsilon, temperature):
     # MODIFIED
     if dataName == "SVHN":
         testsetout = torchvision.datasets.SVHN(
-            "../data/{}".format(dataName), train=False, download=True, transform=transform)
+            "../data/{}".format(dataName), split='train', download=True, transform=transform)
         testloaderOut = torch.utils.data.DataLoader(testsetout, batch_size=1,
                                                     shuffle=False, num_workers=2)
 
